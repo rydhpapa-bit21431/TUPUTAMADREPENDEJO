@@ -1,0 +1,104 @@
+
+INSTRUCCIONES PARA CREAR Y EJECUTAR EL BOT DE TELEGRAM (Telethon, main.py)
+
+1) Requisitos
+- Visual Studio Code: https://code.visualstudio.com/Download
+- Cuenta de Telegram activa.
+- Bot creado con @BotFather.
+- API_ID y API_HASH de https://my.telegram.org/apps
+- Python 3.10 o superior.
+- pip actualizado:  python -m pip install --upgrade pip
+
+2) Crear el bot y obtener credenciales
+2.1 Bot token (BOT_TOKEN)
+   - En Telegram, abre @BotFather -> /start -> /newbot -> sigue los pasos.
+   - Copia el token que entrega. Formato: 1234567890:AA...
+
+2.2 API_ID y API_HASH
+   - Ve a https://my.telegram.org -> Log in.
+   - Apps -> Create new application -> copy API ID y API HASH.
+
+2.3 ADMIN_ID (tu user ID numérico)
+   - En Telegram, escribe al bot @userinfobot o @RawDataBot y copia tu id numérico.
+   - Ese ID será el único con acceso al panel /admin.
+
+3) Preparar el proyecto
+3.1 Carpeta de trabajo
+   - Crea una carpeta, por ejemplo:  C:\proyectos\telegram-bot   o   ~/telegram-bot
+   - Guarda ahí tu main.py con el código provisto.
+   - El propio script creará carpetas:  sessions/  y  data/
+
+3.2 Instalar dependencias
+   pip install telethon==1.36.0
+
+4) Configurar main.py
+   - Abre main.py con visual studio code y completa:
+       API_ID = TU_API_ID   (entero)
+       API_HASH = "TU_API_HASH"
+       BOT_TOKEN = "TU_BOT_TOKEN"
+       ADMIN_ID = TU_ID_NUMERICO   (entero)
+   - Guarda los cambios.
+
+5) Ejecutar
+   Windows: (Shift + click derecho en un espacio en blanco y abrir ventana de powershell aquí)
+     Escribe py main.py y preciona enter
+   - La primera vez se iniciará el bot y quedará “escuchando”. No cierres la consola.
+   - Verás el mensaje: “Bot iniciado y escuchando eventos.”
+
+6) Uso básico dentro de Telegram
+6.1 Iniciar chat con el bot
+   - Abre Telegram, busca tu bot por el @username que diste en BotFather.
+   - Pulsa “Start” o envía /start.
+   - Si tu usuario no tiene acceso activo, verás “No tienes acceso...”. Solo el ADMIN_ID gestiona accesos.
+
+6.2 Panel de administrador
+   - Como ADMIN_ID, envía /admin.
+   - Botones disponibles:
+       ➕ Añadir usuario       -> Da acceso temporal a un usuario. Requiere su ID y teléfono.
+       🗑️ Eliminar usuario     -> Revoca acceso y elimina su sesión.
+       📅 Extender acceso      -> Suma meses a un usuario ya registrado.
+       📢 Enviar anuncio       -> Envía un mensaje a todos los usuarios con acceso vigente.
+   - Sigue las indicaciones de cada flujo. El bot te pedirá datos paso a paso.
+
+6.3 Sesión de usuario para envío a grupos
+   - Cuando añades un usuario, el bot solicita un código de confirmación al teléfono indicado.
+   - Tras verificar el código, se crea una sesión en /sessions/<ID>.session
+   - El propio usuario autorizado usa /start para abrir el menú:
+       • Enviar mensaje ahora
+       • Programar envíos
+       • Detener envíos programados
+       • Blacklist de grupos
+   - “Saved Messages” del usuario sirve como fuente. El usuario elige qué mensaje reenviar.
+
+6.4 Blacklist de grupos
+   - Permite marcar grupos o canales para excluirlos de futuros envíos.
+   - Navega por páginas y alterna estados con los botones.
+
+6.5 /sub
+   - Muestra al usuario su número asociado, tiempo restante y fecha de expiración del acceso.
+
+7) Archivos y datos
+- data/users.json        -> Usuarios con acceso, teléfono y timestamp de expiración.
+- data/blacklist.json    -> IDs de grupos/canales excluidos.
+- sessions/*.session     -> Sesiones de Telethon por usuario.
+- No compartas estos archivos. Contienen datos sensibles.
+
+8) Errores comunes y solución
+- FloodWaitError / PeerFloodError:
+  Ocurre por límites de Telegram. Reduce la frecuencia, respeta pausas y evita abusos.
+- UserIsBlockedError:
+  El bot o la cuenta no puede enviar al destino. Revisa permisos del grupo/canal.
+- “Tu sesión no se encontró” al /start:
+  Asegúrate de que existe sessions/<ID>.session y que la sesión está autorizada.
+- ImportError: telethon no encontrado:
+  Reinstala dependencias en el entorno activo:  pip install telethon==1.36.0
+
+9) Buenas prácticas y cumplimiento
+- Usa el sistema solo con consentimiento y en grupos donde tengas permisos.
+- Respeta las Condiciones de Telegram y la legislación anti‑spam local.
+- Limita la frecuencia de envíos y ofrece mecanismos de exclusión.
+- Protege tokens, API keys y archivos .session. No los subas a repos públicos.
+
+10) Detener el bot
+- Presiona Ctrl+C en la consola para cerrar.
+- Al reiniciar, las sesiones válidas se recargarán automáticamente.
