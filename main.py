@@ -536,6 +536,19 @@ async def handle_forward_now(event):
     user_client = user_sessions.get(uid)
     await send_mass_message(user_client, msg_id, uid)
 
+from flask import Flask
+from threading import Thread
+
+# --- FLASK SERVER (para mantener activo en Render) ---
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "✅ Bot activo y corriendo 24/7"
+
+def run_server():
+    app.run(host='0.0.0.0', port=8080)
+
 # --- EJECUCIÓN PRINCIPAL ---
 async def main():
     await bot.start(bot_token=BOT_TOKEN)
@@ -556,18 +569,3 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("\n🛑 Bot detenido.")
-        
-        from flask import Flask
-from threading import Thread
-
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "✅ Bot activo y corriendo 24/7"
-
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-Thread(target=run).start()
-
