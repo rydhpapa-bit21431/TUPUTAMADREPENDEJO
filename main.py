@@ -547,7 +547,7 @@ def home():
     return "✅ Bot activo y corriendo 24/7"
 
 def run_server():
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=10000)
 
 # --- EJECUCIÓN PRINCIPAL ---
 async def main():
