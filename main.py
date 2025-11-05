@@ -539,32 +539,25 @@ async def handle_forward_now(event):
 from flask import Flask
 from threading import Thread
 
-# --- FLASK SERVER (para mantener activo en Render) ---
-app = Flask(__name__)
+app = Flask('')
 
 @app.route('/')
 def home():
     return "✅ Bot activo y corriendo 24/7"
 
 def run_server():
-    app.run(host='0.0.0.0', port=10000)
+    # Render espera que el proceso escuche en el puerto que le da la variable PORT
+    import os
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host='0.0.0.0', port=port)
 
-# --- EJECUCIÓN PRINCIPAL ---
-async def main():
-    await bot.start(bot_token=BOT_TOKEN)
-    users_data = load_users()
-    for user_id_str, data in users_data.items():
-        if time.time() < data["expires"]:
-            session_path = os.path.join(SESSION_DIR, f"{user_id_str}.session")
-            if os.path.exists(session_path):
-                client = TelegramClient(session_path, API_ID, API_HASH)
-                await client.connect()
-                if await client.is_user_authorized():
-                    user_sessions[int(user_id_str)] = client
-    print("\n✅ Bot iniciado y escuchando eventos.")
-    await bot.run_until_disconnected()
+def keep_alive():
+    t = Thread(target=run_server)
+    t.daemon = True
+    t.start()
 
 if __name__ == "__main__":
+    keep_alive()
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
