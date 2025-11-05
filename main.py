@@ -559,6 +559,13 @@ def keep_alive():
 if __name__ == "__main__":
     keep_alive()
     try:
-        asyncio.run(main())
+        async def start_bot():
+            print("🚀 Iniciando bot de Telegram...")
+            await bot.start(bot_token=BOT_TOKEN)
+            print("🤖 Bot conectado y ejecutándose.")
+            await bot.run_until_disconnected()
+
+        asyncio.run(start_bot())
     except KeyboardInterrupt:
-        print("\n🛑 Bot detenido.")
+        print("\n🛑 Bot detenido manualmente.")
+
